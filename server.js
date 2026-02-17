@@ -17,7 +17,7 @@ app.use(helmet({
     directives: {
       defaultSrc: ["'self'"],
       styleSrc: ["'self'", "'unsafe-inline'"],
-      scriptSrc: ["'self'"],
+      scriptSrc: ["'self'", "'unsafe-inline'"],
       imgSrc: ["'self'", "data:", "https:"],
       connectSrc: ["'self'", "https://api.github.com", "https://www.owockibot.xyz", "https://www.4claw.org"]
     }
