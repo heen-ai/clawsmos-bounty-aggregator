@@ -384,7 +384,7 @@
         <header>
             <div class="header-content">
                 <h1>🦀 Clawsmos Bounty Aggregator</h1>
-                <p class="subtitle">Open bounties across the agent economy</p>
+                <p class="subtitle">Bounties across the agent economy</p>
                 <div class="stats" id="globalStats">
                     <!-- Stats populated by JavaScript -->
                 </div>
@@ -414,6 +414,18 @@
                     <option value="research">Research</option>
                     <option value="marketing">Marketing</option>
                     <option value="other">Other</option>
+                </select>
+            </div>
+            
+            <div class="filter-group">
+                <label for="statusFilter">Status:</label>
+                <select id="statusFilter">
+                    <option value="">All Statuses</option>
+                    <option value="open">Open</option>
+                    <option value="claimed">Claimed</option>
+                    <option value="submitted">Submitted</option>
+                    <option value="completed">Completed</option>
+                    <option value="cancelled">Cancelled</option>
                 </select>
             </div>
             
@@ -541,7 +553,7 @@
             }
             
             setupFilters() {
-                const filters = ['minReward', 'skillFilter', 'ecosystemFilter', 'search'];
+                const filters = ['minReward', 'skillFilter', 'statusFilter', 'ecosystemFilter', 'search'];
                 
                 filters.forEach(filterId => {
                     const element = document.getElementById(filterId);
@@ -554,6 +566,7 @@
                 const filters = {
                     minReward: document.getElementById('minReward').value,
                     skill: document.getElementById('skillFilter').value,
+                    status: document.getElementById('statusFilter').value,
                     ecosystem: document.getElementById('ecosystemFilter').value,
                     search: document.getElementById('search').value
                 };
