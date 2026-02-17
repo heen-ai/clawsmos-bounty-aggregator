@@ -339,36 +339,95 @@
         
         @media (max-width: 768px) {
             .container {
+                padding: 10px;
+            }
+            
+            .header-content {
                 padding: 15px;
             }
             
             h1 {
-                font-size: 2rem;
+                font-size: 1.4rem;
+            }
+            
+            .subtitle {
+                font-size: 0.9rem;
+            }
+            
+            .stats {
+                gap: 8px;
+            }
+            
+            .stat {
+                padding: 6px 12px;
+                font-size: 0.85rem;
             }
             
             .filters {
                 flex-direction: column;
-                gap: 15px;
+                gap: 10px;
+                padding: 12px;
             }
             
             .filter-group {
                 min-width: auto;
+                flex-direction: column;
+                align-items: stretch;
+                gap: 4px;
+            }
+            
+            .filter-group label {
+                font-size: 0.85rem;
+            }
+            
+            select, input {
+                padding: 8px 10px;
+                font-size: 0.9rem;
             }
             
             .ecosystems {
                 grid-template-columns: 1fr;
+                gap: 15px;
+            }
+            
+            .ecosystem {
+                padding: 15px;
+            }
+            
+            .ecosystem-name {
+                font-size: 1.1rem;
+            }
+            
+            .bounty {
+                padding: 12px;
             }
             
             .bounty-header {
                 flex-direction: column;
                 align-items: flex-start;
-                gap: 10px;
+                gap: 8px;
+            }
+            
+            .bounty-title {
+                font-size: 1rem;
+                word-break: break-word;
+            }
+            
+            .bounty-description {
+                font-size: 0.85rem;
+                word-break: break-word;
+                overflow-wrap: anywhere;
             }
             
             .bounty-footer {
                 flex-direction: column;
                 align-items: flex-start;
                 gap: 10px;
+            }
+            
+            .claim-btn {
+                width: 100%;
+                text-align: center;
             }
             
             .controls {
@@ -516,7 +575,11 @@
                 const statsEl = document.getElementById('globalStats');
                 const totalBounties = data.count || 0;
                 const totalReward = Object.values(data.bounties).flat()
-                    .reduce((sum, bounty) => sum + (parseFloat(bounty.reward) || 0), 0);
+                    .filter(b => b.status !== 'cancelled')
+                    .reduce((sum, bounty) => {
+                        const r = parseFloat(bounty.reward) || 0;
+                        return sum + (r > 10000 ? 0 : r);
+                    }, 0);
                 const ecosystemCount = data.ecosystems.length;
                 
                 statsEl.innerHTML = `
@@ -609,7 +672,10 @@
                 Object.entries(this.bounties).forEach(([ecosystemName, bounties]) => {
                     if (bounties.length === 0) return;
                     
-                    const totalReward = bounties.reduce((sum, bounty) => sum + (parseFloat(bounty.reward) || 0), 0);
+                    const totalReward = bounties.filter(b => b.status !== 'cancelled').reduce((sum, bounty) => {
+                        const r = parseFloat(bounty.reward) || 0;
+                        return sum + (r > 10000 ? 0 : r);
+                    }, 0);
                     
                     html += `
                         <div class="ecosystem">
