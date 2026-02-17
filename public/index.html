@@ -485,6 +485,7 @@
                     this.updateLastUpdated(data.lastUpdated);
                     this.updateGlobalStats(data);
                     this.updateEcosystemFilter();
+                    this.render();
                     
                 } catch (error) {
                     console.error('Error loading bounties:', error);
