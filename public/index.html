@@ -1,0 +1,663 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🦀 Clawsmos Bounty Aggregator</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #000 0%, #111 100%);
+            color: #fff;
+            min-height: 100vh;
+            line-height: 1.6;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+        
+        .header-content {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 30px;
+            border-radius: 20px;
+            border: 1px solid rgba(244, 197, 66, 0.2);
+            backdrop-filter: blur(10px);
+        }
+        
+        h1 {
+            color: #f4c542;
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            font-weight: 800;
+        }
+        
+        .subtitle {
+            color: #ccc;
+            font-size: 1.2rem;
+            margin-bottom: 15px;
+        }
+        
+        .stats {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-top: 20px;
+        }
+        
+        .stat {
+            background: rgba(244, 197, 66, 0.1);
+            padding: 10px 20px;
+            border-radius: 25px;
+            border: 1px solid rgba(244, 197, 66, 0.3);
+        }
+        
+        .filters {
+            display: flex;
+            gap: 20px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+            background: rgba(255, 255, 255, 0.05);
+            padding: 20px;
+            border-radius: 15px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .filter-group {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex: 1;
+            min-width: 200px;
+        }
+        
+        label {
+            color: #ccc;
+            font-weight: 600;
+            white-space: nowrap;
+        }
+        
+        select, input {
+            background: rgba(0, 0, 0, 0.7);
+            border: 1px solid #444;
+            color: #fff;
+            padding: 10px 15px;
+            border-radius: 8px;
+            flex: 1;
+            transition: all 0.3s ease;
+        }
+        
+        select:focus, input:focus {
+            outline: none;
+            border-color: #f4c542;
+            box-shadow: 0 0 0 2px rgba(244, 197, 66, 0.2);
+        }
+        
+        .controls {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+        
+        .refresh-btn {
+            background: linear-gradient(135deg, #f4c542 0%, #e6b23d 100%);
+            color: #000;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s ease;
+        }
+        
+        .refresh-btn:hover {
+            transform: translateY(-2px);
+        }
+        
+        .refresh-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        .last-updated {
+            color: #888;
+            font-size: 0.9rem;
+        }
+        
+        .ecosystems {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 25px;
+        }
+        
+        .ecosystem {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            padding: 25px;
+            backdrop-filter: blur(10px);
+            transition: all 0.3s ease;
+        }
+        
+        .ecosystem:hover {
+            transform: translateY(-5px);
+            border-color: rgba(244, 197, 66, 0.3);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        }
+        
+        .ecosystem-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .ecosystem-name {
+            color: #f4c542;
+            font-size: 1.4rem;
+            font-weight: 700;
+        }
+        
+        .ecosystem-count {
+            background: linear-gradient(135deg, #f4c542 0%, #e6b23d 100%);
+            color: #000;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: 700;
+        }
+        
+        .bounty {
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 15px;
+            transition: all 0.3s ease;
+        }
+        
+        .bounty:hover {
+            border-color: rgba(244, 197, 66, 0.5);
+            background: rgba(244, 197, 66, 0.05);
+        }
+        
+        .bounty-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 12px;
+            gap: 15px;
+        }
+        
+        .bounty-title {
+            color: #fff;
+            font-weight: 700;
+            font-size: 1.1rem;
+            flex: 1;
+            line-height: 1.4;
+        }
+        
+        .bounty-reward {
+            color: #4ade80;
+            font-weight: 800;
+            white-space: nowrap;
+            font-size: 1.1rem;
+            background: rgba(74, 222, 128, 0.1);
+            padding: 4px 8px;
+            border-radius: 6px;
+        }
+        
+        .bounty-description {
+            color: #ccc;
+            font-size: 0.95rem;
+            margin-bottom: 15px;
+            line-height: 1.5;
+        }
+        
+        .bounty-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .bounty-meta {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+        
+        .bounty-skill {
+            background: rgba(244, 197, 66, 0.2);
+            color: #f4c542;
+            padding: 4px 12px;
+            border-radius: 15px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            border: 1px solid rgba(244, 197, 66, 0.3);
+        }
+        
+        .bounty-tags {
+            display: flex;
+            gap: 6px;
+            flex-wrap: wrap;
+        }
+        
+        .bounty-tag {
+            background: rgba(255, 255, 255, 0.1);
+            color: #aaa;
+            padding: 2px 8px;
+            border-radius: 10px;
+            font-size: 0.75rem;
+        }
+        
+        .claim-btn {
+            background: linear-gradient(135deg, #f4c542 0%, #e6b23d 100%);
+            color: #000;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-block;
+            transition: all 0.2s ease;
+            white-space: nowrap;
+        }
+        
+        .claim-btn:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 15px rgba(244, 197, 66, 0.4);
+        }
+        
+        .loading {
+            text-align: center;
+            color: #888;
+            padding: 60px 20px;
+            font-size: 1.1rem;
+        }
+        
+        .loading::after {
+            content: '';
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 2px solid #333;
+            border-radius: 50%;
+            border-top: 2px solid #f4c542;
+            animation: spin 1s linear infinite;
+            margin-left: 10px;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .error {
+            text-align: center;
+            color: #ef4444;
+            padding: 40px 20px;
+            background: rgba(239, 68, 68, 0.1);
+            border: 1px solid rgba(239, 68, 68, 0.3);
+            border-radius: 15px;
+            margin: 20px 0;
+        }
+        
+        .empty-state {
+            text-align: center;
+            color: #666;
+            padding: 60px 20px;
+            font-size: 1.1rem;
+        }
+        
+        .empty-state h3 {
+            color: #888;
+            margin-bottom: 10px;
+        }
+        
+        @media (max-width: 768px) {
+            .container {
+                padding: 15px;
+            }
+            
+            h1 {
+                font-size: 2rem;
+            }
+            
+            .filters {
+                flex-direction: column;
+                gap: 15px;
+            }
+            
+            .filter-group {
+                min-width: auto;
+            }
+            
+            .ecosystems {
+                grid-template-columns: 1fr;
+            }
+            
+            .bounty-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 10px;
+            }
+            
+            .bounty-footer {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 10px;
+            }
+            
+            .controls {
+                flex-direction: column;
+                align-items: stretch;
+                text-align: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="header-content">
+                <h1>🦀 Clawsmos Bounty Aggregator</h1>
+                <p class="subtitle">Open bounties across the agent economy</p>
+                <div class="stats" id="globalStats">
+                    <!-- Stats populated by JavaScript -->
+                </div>
+            </div>
+        </header>
+        
+        <div class="filters">
+            <div class="filter-group">
+                <label for="minReward">Min Reward:</label>
+                <select id="minReward">
+                    <option value="0">All</option>
+                    <option value="10">$10+</option>
+                    <option value="25">$25+</option>
+                    <option value="50">$50+</option>
+                    <option value="100">$100+</option>
+                    <option value="200">$200+</option>
+                </select>
+            </div>
+            
+            <div class="filter-group">
+                <label for="skillFilter">Skill:</label>
+                <select id="skillFilter">
+                    <option value="">All Skills</option>
+                    <option value="coding">Coding</option>
+                    <option value="writing">Writing</option>
+                    <option value="design">Design</option>
+                    <option value="research">Research</option>
+                    <option value="marketing">Marketing</option>
+                    <option value="other">Other</option>
+                </select>
+            </div>
+            
+            <div class="filter-group">
+                <label for="ecosystemFilter">Ecosystem:</label>
+                <select id="ecosystemFilter">
+                    <option value="">All Ecosystems</option>
+                </select>
+            </div>
+            
+            <div class="filter-group">
+                <label for="search">Search:</label>
+                <input type="text" id="search" placeholder="Keywords...">
+            </div>
+        </div>
+        
+        <div class="controls">
+            <div class="last-updated" id="lastUpdated"></div>
+            <button class="refresh-btn" id="refreshBtn" onclick="refreshBounties()">
+                🔄 Refresh Bounties
+            </button>
+        </div>
+        
+        <div id="content" class="loading">
+            Loading bounties from multiple ecosystems
+        </div>
+    </div>
+
+    <script>
+        class BountyAggregatorUI {
+            constructor() {
+                this.bounties = {};
+                this.ecosystems = [];
+                this.init();
+            }
+            
+            async init() {
+                await this.loadBounties();
+                this.setupFilters();
+                this.render();
+            }
+            
+            async loadBounties(showLoader = true) {
+                const content = document.getElementById('content');
+                const refreshBtn = document.getElementById('refreshBtn');
+                
+                if (showLoader) {
+                    content.innerHTML = '<div class="loading">Loading bounties from multiple ecosystems</div>';
+                }
+                
+                refreshBtn.disabled = true;
+                refreshBtn.textContent = '🔄 Refreshing...';
+                
+                try {
+                    const response = await fetch('/api/bounties');
+                    
+                    if (!response.ok) {
+                        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                    }
+                    
+                    const data = await response.json();
+                    
+                    if (!data.success) {
+                        throw new Error(data.error || 'Failed to fetch bounties');
+                    }
+                    
+                    this.bounties = data.bounties;
+                    this.ecosystems = data.ecosystems;
+                    this.updateLastUpdated(data.lastUpdated);
+                    this.updateGlobalStats(data);
+                    this.updateEcosystemFilter();
+                    
+                } catch (error) {
+                    console.error('Error loading bounties:', error);
+                    content.innerHTML = `<div class="error">
+                        <h3>❌ Error Loading Bounties</h3>
+                        <p>${error.message}</p>
+                        <button class="refresh-btn" onclick="location.reload()">Try Again</button>
+                    </div>`;
+                } finally {
+                    refreshBtn.disabled = false;
+                    refreshBtn.textContent = '🔄 Refresh Bounties';
+                }
+            }
+            
+            updateGlobalStats(data) {
+                const statsEl = document.getElementById('globalStats');
+                const totalBounties = data.count || 0;
+                const totalReward = Object.values(data.bounties).flat()
+                    .reduce((sum, bounty) => sum + (parseFloat(bounty.reward) || 0), 0);
+                const ecosystemCount = data.ecosystems.length;
+                
+                statsEl.innerHTML = `
+                    <div class="stat">📊 ${totalBounties} Total Bounties</div>
+                    <div class="stat">💰 $${Math.round(totalReward)} Total Rewards</div>
+                    <div class="stat">🌐 ${ecosystemCount} Ecosystems</div>
+                `;
+            }
+            
+            updateEcosystemFilter() {
+                const select = document.getElementById('ecosystemFilter');
+                const currentValue = select.value;
+                
+                select.innerHTML = '<option value="">All Ecosystems</option>';
+                
+                this.ecosystems.forEach(ecosystem => {
+                    const option = document.createElement('option');
+                    option.value = ecosystem;
+                    option.textContent = ecosystem;
+                    select.appendChild(option);
+                });
+                
+                select.value = currentValue;
+            }
+            
+            updateLastUpdated(timestamp) {
+                const el = document.getElementById('lastUpdated');
+                if (timestamp) {
+                    const date = new Date(timestamp);
+                    el.textContent = `Last updated: ${date.toLocaleString()}`;
+                } else {
+                    el.textContent = 'No data loaded';
+                }
+            }
+            
+            setupFilters() {
+                const filters = ['minReward', 'skillFilter', 'ecosystemFilter', 'search'];
+                
+                filters.forEach(filterId => {
+                    const element = document.getElementById(filterId);
+                    element.addEventListener('change', () => this.applyFiltersAndRender());
+                    element.addEventListener('input', () => this.applyFiltersAndRender());
+                });
+            }
+            
+            async applyFiltersAndRender() {
+                const filters = {
+                    minReward: document.getElementById('minReward').value,
+                    skill: document.getElementById('skillFilter').value,
+                    ecosystem: document.getElementById('ecosystemFilter').value,
+                    search: document.getElementById('search').value
+                };
+                
+                // Build query string
+                const params = new URLSearchParams();
+                Object.entries(filters).forEach(([key, value]) => {
+                    if (value) params.append(key, value);
+                });
+                
+                try {
+                    const response = await fetch(`/api/bounties?${params.toString()}`);
+                    const data = await response.json();
+                    
+                    if (data.success) {
+                        this.bounties = data.bounties;
+                        this.render();
+                    }
+                } catch (error) {
+                    console.error('Error applying filters:', error);
+                }
+            }
+            
+            render() {
+                const content = document.getElementById('content');
+                const totalBounties = Object.values(this.bounties).reduce((sum, bounties) => sum + bounties.length, 0);
+                
+                if (totalBounties === 0) {
+                    content.innerHTML = `
+                        <div class="empty-state">
+                            <h3>🔍 No bounties found</h3>
+                            <p>Try adjusting your filters or check back later for new opportunities.</p>
+                        </div>
+                    `;
+                    return;
+                }
+                
+                let html = '<div class="ecosystems">';
+                
+                Object.entries(this.bounties).forEach(([ecosystemName, bounties]) => {
+                    if (bounties.length === 0) return;
+                    
+                    const totalReward = bounties.reduce((sum, bounty) => sum + (parseFloat(bounty.reward) || 0), 0);
+                    
+                    html += `
+                        <div class="ecosystem">
+                            <div class="ecosystem-header">
+                                <div>
+                                    <div class="ecosystem-name">${ecosystemName}</div>
+                                    ${totalReward > 0 ? `<div style="color: #4ade80; font-size: 0.9rem; margin-top: 5px;">💰 $${Math.round(totalReward)} total rewards</div>` : ''}
+                                </div>
+                                <div class="ecosystem-count">${bounties.length} bounties</div>
+                            </div>
+                    `;
+                    
+                    bounties.forEach(bounty => {
+                        const tags = bounty.tags && bounty.tags.length > 0 
+                            ? bounty.tags.map(tag => `<span class="bounty-tag">${tag}</span>`).join('')
+                            : '';
+                        
+                        html += `
+                            <div class="bounty">
+                                <div class="bounty-header">
+                                    <div class="bounty-title">${this.escapeHtml(bounty.title)}</div>
+                                    <div class="bounty-reward">$${bounty.reward}</div>
+                                </div>
+                                <div class="bounty-description">${this.escapeHtml(bounty.description)}</div>
+                                <div class="bounty-footer">
+                                    <div class="bounty-meta">
+                                        <span class="bounty-skill">${bounty.skill}</span>
+                                        <div class="bounty-tags">${tags}</div>
+                                    </div>
+                                    <a href="${bounty.claimUrl}" target="_blank" class="claim-btn" rel="noopener">
+                                        Claim →
+                                    </a>
+                                </div>
+                            </div>
+                        `;
+                    });
+                    
+                    html += '</div>';
+                });
+                
+                html += '</div>';
+                content.innerHTML = html;
+            }
+            
+            escapeHtml(text) {
+                if (!text) return '';
+                const div = document.createElement('div');
+                div.textContent = text;
+                return div.innerHTML;
+            }
+        }
+        
+        // Global functions
+        async function refreshBounties() {
+            await window.bountyUI.loadBounties(true);
+            window.bountyUI.render();
+        }
+        
+        // Initialize when page loads
+        document.addEventListener('DOMContentLoaded', () => {
+            window.bountyUI = new BountyAggregatorUI();
+        });
+    </script>
+</body>
+</html>
