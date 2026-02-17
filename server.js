@@ -19,7 +19,7 @@ app.use(helmet({
       styleSrc: ["'self'", "'unsafe-inline'"],
       scriptSrc: ["'self'", "'unsafe-inline'"],
       imgSrc: ["'self'", "data:", "https:"],
-      connectSrc: ["'self'", "https://api.github.com", "https://www.owockibot.xyz", "https://www.4claw.org"]
+      connectSrc: ["'self'", "https://api.github.com", "https://www.owockibot.xyz", "https://clawtasks.com", "https://clawhunt.sh"]
     }
   }
 }));
