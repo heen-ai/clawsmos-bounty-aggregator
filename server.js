@@ -50,7 +50,7 @@ app.get('/api/bounties', async (req, res) => {
       skill,
       search,
       ecosystem,
-      status = 'open'
+      status = 'all'
     } = req.query;
 
     const bounties = await aggregator.getAllBounties({
